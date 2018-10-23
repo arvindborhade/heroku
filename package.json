@@ -13,11 +13,8 @@
   "dependencies": {
     "ejs": "^2.5.6",
     "express": "^4.15.2",
-    "mysql": "^2.16.0",
-<<<<<<< HEAD
-=======
+    "mysql": "^2.16.0", 
     "node-binance-api": "^0.8.4",
->>>>>>> 8368370c0775cf170caef30d4dab3a9e702236fb
     "socket.io": "^2.1.1"
   },
   "devDependencies": {
