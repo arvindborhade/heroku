@@ -1,0 +1,279 @@
+<html lang="en">
+	<head>
+		<title>Bootstrap Example</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		
+		<!--<script src="/socket.io/socket.io.js"></script>-->
+	</head>
+	
+	<body>
+
+		<div class="jumbotron text-center">
+			<h1>My First Bootstrap Page</h1>
+			<p>Resize this responsive page to see the effect!</p> 
+		</div>
+  
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<h1 id="socketio"> not connected </h1>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-12">
+					<form class="form-horizontal">
+						<div class="col-sm-12">
+							<div class="col-sm-2">
+								<label class="control-label">
+									Currency
+								</label>
+							</div>
+							<div class="col-sm-10">
+								<div class="form-group">
+									<input class="form-control" id="currency" autocomplete="off"/>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-sm-12">
+							<div class="col-sm-2">
+								<label class="control-label">
+									BUY Rate
+								</label>
+							</div>
+							<div class="col-sm-10">
+								<div class="form-group">
+									<input class="form-control" id="rate" autocomplete="off"/>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-sm-12">
+							<div class="col-sm-2">
+								<label class="control-label">
+									Quantity
+								</label>
+							</div>
+							<div class="col-sm-10">
+								<div class="form-group">
+									<input class="form-control" id="qty" autocomplete="off"/>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-sm-12">
+							<div class="col-sm-2">
+								<label class="control-label">
+									Take Profit %
+								</label>
+							</div>
+							<div class="col-sm-10">
+								<div class="form-group">
+									<input class="form-control" id="tp_per" autocomplete="off"/>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-sm-12">
+							<div class="col-sm-2">
+								<label class="control-label" >
+									Take Profit Amount
+								</label>
+							</div>
+							<div class="col-sm-10">
+								<div class="form-group">
+									<input class="form-control" id="tp_amt" autocomplete="off"/>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-sm-12">
+							<div class="col-sm-2">
+								<label class="control-label">
+									Stop Profit %
+								</label>
+							</div>
+							<div class="col-sm-10">
+								<div class="form-group">
+									<input class="form-control" id="sp_per" autocomplete="off"/>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-sm-12">
+							<div class="col-sm-2">
+								<label class="control-label">
+									Stop Profit Amount
+								</label>
+							</div>
+							<div class="col-sm-10">
+								<div class="form-group">
+									<input class="form-control" id="sp_amt" autocomplete="off"/>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-sm-12">
+							<div class="col-sm-2">
+								<label class="control-label">
+									Stop Loss %
+								</label>
+							</div>
+							<div class="col-sm-10">
+								<div class="form-group">
+									<input class="form-control" id="sl_per" autocomplete="off"/>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-sm-12">
+							<div class="col-sm-2">
+								<label class="control-label">
+									Stop Loss Amount
+								</label>
+							</div>
+							<div class="col-sm-10">
+								<div class="form-group">
+									<input class="form-control" id="sl_amt" autocomplete="off"/>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-sm-12">
+							<div class="col-sm-10">
+								
+							</div>
+							<div class="col-sm-2">
+								<a class="btn btn-primary" style="width: 100%;" id="submit">Submit</a>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+				
+				
+			<div class="row">
+				<div class="col-sm-12">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>currency</th>
+								<th>Rate</th>
+								<th>Qty</th>
+								<th>Take Profit Rate</th>
+								<th>Stop Profit Rate</th>
+								<th>Stop Loss Rate</th>
+								<th>Status</th>
+								<th>Data & Time</th>
+							</tr>
+						</thead>
+						<tbody id="tradedata">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script type="text/javascript">
+				$(document).ready(function(){
+				
+					$("#tp_per").keyup(function(){
+					
+						rate = $("#rate").val();
+						
+						take_profit_per = $("#tp_per").val();
+						
+						take_profit_per1 = parseFloat(rate) * parseFloat(take_profit_per) / 100 ;
+						
+						take_profit_amt = parseFloat(rate) + parseFloat(take_profit_per1);
+						
+						take_profit_amt1 = parseFloat(take_profit_amt).toFixed(8);
+						
+						$("#tp_amt").val(take_profit_amt1);
+					});
+					
+					$("#sp_per").keyup(function(){
+						rate = $("#rate").val();
+						
+						stop_profit_per = $("#sp_per").val();
+						
+						stop_profit_per1 = parseFloat(rate) * parseFloat(stop_profit_per) / 100;
+						
+						stop_profit_amt = parseFloat(rate) + parseFloat(stop_profit_per1);
+						
+						stop_profit_amt1 = parseFloat(stop_profit_amt).toFixed(8);
+						
+						$("#sp_amt").val(stop_profit_amt1);
+					});
+					
+					$("#sl_per").keyup(function(){
+						rate = $("#rate").val();
+						
+						stop_loss_per = $("#sl_per").val();
+						
+						stop_loss_per1 = parseFloat(rate) * parseFloat(stop_profit_per) / 100;
+						
+						stop_loss_amt = parseFloat(rate) - parseFloat(stop_loss_per1);
+						
+						stop_loss_amt1 = parseFloat(stop_loss_amt).toFixed(8);
+						
+						$("#sl_amt").val(stop_loss_amt1);
+					});
+					
+				});
+			</script>
+			
+			<!--<script>
+				// Connect to our node/websockets server
+				var socket = io.connect('http://localhost:5000');
+				
+				socket.on('connect', function() {
+				
+					document.getElementById("socketio").innerHTML = "socket connected";
+					
+				});
+				
+				$('#submit').click(function(){
+					
+					post = {
+						currency : $("#currency").val(),
+						buy_rate : $("#rate").val(),
+						qty : $("#qty").val(),
+						take_profit_per : $("#tp_per").val(),
+						take_profit_amt : $("#tp_amt").val(),
+						stop_profit_per : $("#sp_per").val(),
+						stop_profit_amt : $("#sp_amt").val(),
+						stop_loss_per : $("#sl_per").val(),
+						stop_loss_amt : $("#sl_amt").val(),
+						
+					}
+					
+					
+					
+					socket.emit('post data', post)
+				
+				});
+				
+				socket.on('post data', function(element){
+					
+					var currentdate =  new Date().toLocaleString();
+				
+					$('#tradedata').prepend('<tr><td>' + element.currency + '</td><td>' + element.buy_rate + '</td><td>' + element.qty + '</td><td>' + element.take_profit_amt + '</td><td>' + element.stop_profit_amt + '</td><td>' + element.stop_loss_amt + '</td><td>' + element.status + '</td><td>' + currentdate + '</td></tr>');
+				})
+				
+				socket.on('showrows', function(data){
+				
+					data.forEach(function(element) {
+						//console.log(element);
+						$('#tradedata').append('<tr><td>' + element.currency + '</td><td>' + element.buy_rate + '</td><td>' + element.qty + '</td><td>' + element.take_profit_amt + '</td><td>' + element.stop_profit_amt + '</td><td>' + element.stop_loss_amt + '</td><td>' + element.status + '</td><td>' + element.date_time + '</td></tr>');
+					});
+					
+				})
+				
+			</script> -->
+		</div>
+	</body>
+</html>
